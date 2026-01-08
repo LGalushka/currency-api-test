@@ -3,8 +3,6 @@ const btn = document.getElementById("js-update-btn");
 const errorMessage = document.getElementById("error-message");
 const loader = document.getElementById("loader");
 
-let rates = [];
-
 const API_URL = "https://www.cbr-xml-daily.ru/daily_json.js";
 
 async function fetchCurrency() {
@@ -20,10 +18,14 @@ async function fetchCurrency() {
       throw new Error("Ошибка при загрузке данных");
     }
     const data = await response.json();
-    console.log(data.Valute.AUD);
-    console.log(data.Valute.AUD.Name);
-    console.log(data.Valute.AUD.CharCode);
-    console.log(data.Valute.AUD.Value);
+
+    // Превращаем объект Valute в массив валют
+
+    const currenciesArray = data.Valute;
+
+    renderCurrencies(currenciesArray);
+
+    console.log(currenciesArray);
   } catch (error) {
     errorMessage.textContent =
       "Не удалось загрузить курсы валют. Попробуйте позже.";
@@ -34,4 +36,27 @@ async function fetchCurrency() {
     btn.disabled = false;
   }
 }
+
+// функция для отрисовки DOM
+function renderCurrencies(currencies) {
+  const symbols = ["USD", "EUR", "GBP", "CNY"];
+
+  symbols.forEach((code) => {
+    const currency = currencies[code];
+    if (currency) {
+      const currencyElement = document.createElement("li");
+      currencyElement.classList.add("currency-card");
+
+      currencyElement.innerHTML = `
+    <h2>${currency.CharCode}</h2>
+    <p>${currency.Name}</p>
+    <p>Цена: ${currency.Value.toFixed(2)} руб.</p>
+    `;
+      container.appendChild(currencyElement);
+    }
+  });
+}
+
 fetchCurrency();
+// Обработчик на кнопку, чтобы вызывать fetchCurrency
+btn.addEventListener("click", fetchCurrency);
