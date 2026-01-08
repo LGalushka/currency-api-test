@@ -8,7 +8,7 @@ const API_URL = "https://www.cbr-xml-daily.ru/daily_json.js";
 async function fetchCurrency() {
   try {
     loader.classList.remove("hidden");
-    errorMessage.classList.add("errorMessage");
+    errorMessage.classList.remove("errorMessage");
     container.innerHTML = "";
     btn.disabled = true;
 
@@ -27,7 +27,7 @@ async function fetchCurrency() {
   } catch (error) {
     errorMessage.textContent =
       "Не удалось загрузить курсы валют. Попробуйте позже.";
-    errorMessage.classList.remove("errorMessage");
+    errorMessage.classList.add("errorMessage");
     console.error(error);
   } finally {
     loader.classList.add("hidden");
@@ -48,13 +48,16 @@ function renderCurrencies(currencies) {
       const currencyElement = document.createElement("li");
       currencyElement.classList.add("currency-card");
 
+      const diffClass = diff > 0 ? "change-up" : "change-down";
+      const diffSymbol = diff > 0 ? "▲" : "▼";
+
       currencyElement.innerHTML = `
     <h2>${currency.CharCode}</h2>
     <p>${currency.Name}</p>
     <p>Цена: ${currency.Value.toFixed(2)} руб.</p>
-    <p style="color: ${diff > 0 ? "red" : "green"}"> ${
-        diff > 0 ? "▲" : "▼"
-      } ${diff.toFixed(4)}</p>
+    <p class="price-change ${diffClass}">
+    ${diffSymbol} ${Math.abs(diff).toFixed(4)}
+    </p>
     `;
       container.appendChild(currencyElement);
     }
