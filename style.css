@@ -1,21 +1,22 @@
 body {
-  font-family: sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px;
   background: #f4f4f9;
+  color: #333;
 }
 
 .box {
   max-width: 500px;
   margin: 0 auto;
   background: white;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Стили состояний*/
 #loader {
-  display: block;
   color: #3716f1;
   text-align: center;
   margin: 10px 0;
@@ -26,12 +27,12 @@ body {
 }
 
 .errorMessage {
-  display: none;
   color: white;
   background: #ff5f5f;
-  padding: 10px;
+  padding: 15px;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: bold;
 }
 
 ul {
@@ -39,44 +40,60 @@ ul {
   padding: 0;
 }
 
-li {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+.currency-card {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #fafafa;
 }
 
-li:last-child {
-  border-bottom: none;
+.currency-card h2,
+.currency-card p {
+  margin: 0;
 }
 
 .containerCurrency {
-  width: 100%;
-  padding: 10px;
+  padding: 0;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-  text-align: center;
 }
 
 button {
-  background: #4caf50;
+  background: #007bff;
   color: white;
   border: none;
-  padding: 10px 15px;
+  padding: 12px 15px;
   border-radius: 4px;
   cursor: pointer;
   width: 100%;
   margin-bottom: 10px;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+button:hover:enabled {
+  background: #0056b3;
 }
 
 button:disabled {
   background: #ccc;
+  cursor: not-allowed;
 }
-/*вывод результата*/
-.currency-card {
-  border: 1px solid gray;
-  margin-bottom: 5px;
+
+/*для изменения индикатора курса*/
+.price-change {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: right;
+}
+
+.change-up {
+  color: #28a745;
+}
+
+.change-down {
+  color: #dc3545;
 }
