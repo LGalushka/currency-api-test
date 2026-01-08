@@ -48,13 +48,16 @@ function renderCurrencies(currencies) {
       const currencyElement = document.createElement("li");
       currencyElement.classList.add("currency-card");
 
-      const diffClass = diff > 0 ? "change-up" : "change-down";
-      const diffSymbol = diff > 0 ? "▲" : "▼";
+      const { CharCode, Name, Value } = currency;
+
+      const isUp = diff > 0;
+      const diffClass = isUp ? "change-up" : "change-down";
+      const diffSymbol = isUp ? "▲" : "▼";
 
       currencyElement.innerHTML = `
-    <h2>${currency.CharCode}</h2>
-    <p>${currency.Name}</p>
-    <p>Цена: ${currency.Value.toFixed(2)} руб.</p>
+    <h2>${CharCode}</h2>
+    <p>${Name}</p>
+    <p>Цена: ${Value.toFixed(2)} руб.</p>
     <p class="price-change ${diffClass}">
     ${diffSymbol} ${Math.abs(diff).toFixed(4)}
     </p>
