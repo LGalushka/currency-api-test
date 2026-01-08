@@ -25,7 +25,7 @@ body {
   display: none !important;
 }
 
-#error-message {
+.errorMessage {
   display: none;
   color: white;
   background: #ff5f5f;
@@ -76,3 +76,7 @@ button:disabled {
   background: #ccc;
 }
 /*вывод результата*/
+.currency-card {
+  border: 1px solid gray;
+  margin-bottom: 5px;
+}
