@@ -24,8 +24,6 @@ async function fetchCurrency() {
     const currenciesArray = data.Valute;
 
     renderCurrencies(currenciesArray);
-
-    console.log(currenciesArray);
   } catch (error) {
     errorMessage.textContent =
       "Не удалось загрузить курсы валют. Попробуйте позже.";
@@ -39,10 +37,13 @@ async function fetchCurrency() {
 
 // функция для отрисовки DOM
 function renderCurrencies(currencies) {
+  container.innerHTML = "";
   const symbols = ["USD", "EUR", "GBP", "CNY"];
 
   symbols.forEach((code) => {
     const currency = currencies[code];
+    const diff = currency.Value - currency.Previous;
+
     if (currency) {
       const currencyElement = document.createElement("li");
       currencyElement.classList.add("currency-card");
@@ -51,6 +52,9 @@ function renderCurrencies(currencies) {
     <h2>${currency.CharCode}</h2>
     <p>${currency.Name}</p>
     <p>Цена: ${currency.Value.toFixed(2)} руб.</p>
+    <p style="color: ${diff > 0 ? "red" : "green"}"> ${
+        diff > 0 ? "▲" : "▼"
+      } ${diff.toFixed(4)}</p>
     `;
       container.appendChild(currencyElement);
     }
