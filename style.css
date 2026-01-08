@@ -1,0 +1,78 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f4f4f9;
+}
+
+.box {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Стили состояний*/
+#loader {
+  display: block;
+  color: #3716f1;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#error-message {
+  display: none;
+  color: white;
+  background: #ff5f5f;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+.containerCurrency {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+button:disabled {
+  background: #ccc;
+}
+/*вывод результата*/
