@@ -2,8 +2,26 @@ const container = document.getElementById("js-container-currency");
 const btn = document.getElementById("js-update-btn");
 const errorMessage = document.getElementById("error-message");
 const loader = document.getElementById("loader");
+const amountInput = document.getElementById("js-amount-input");
+const calcResult = document.getElementById("js-calc-result");
+
+let allRates = {};
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const API_URL = "https://www.cbr-xml-daily.ru/daily_json.js";
+
+function filterCurrencyData(allRatesObject) {
+  const requiredSymbols = ["USD", "EUR", "GBP", "CNY"];
+  const filtered = {};
+
+  requiredSymbols.forEach((symbol) => {
+    if (allRatesObject[symbol]) {
+      filtered[symbol] = allRatesObject[symbol];
+    }
+  });
+  return filtered;
+}
 
 async function fetchCurrency() {
   try {
@@ -19,11 +37,15 @@ async function fetchCurrency() {
     }
     const data = await response.json();
 
-    // Превращаем объект Valute в массив валют
+    await delay(1500);
 
-    const currenciesArray = data.Valute;
+    const allCurrenciesArray = data.Valute;
 
-    renderCurrencies(currenciesArray);
+    // Фильтруем их и сохраняем только 4 нужные в глобальную переменную
+    allRates = filterCurrencyData(allCurrenciesArray);
+
+    // Передаем уже отфильтрованный объект в функцию отрисовки
+    renderCurrencies(allRates);
   } catch (error) {
     errorMessage.textContent =
       "Не удалось загрузить курсы валют. Попробуйте позже.";
@@ -35,12 +57,28 @@ async function fetchCurrency() {
   }
 }
 
+// Функция калькулятора
+function calculate(currencyCode) {
+  const amount = parseFloat(amountInput.value);
+
+  calcResult.classList.remove("result-error", "result-success");
+
+  if (isNaN(amount) || amount <= 0) {
+    calcResult.textContent = "Введите корректную сумму";
+    calcResult.classList.add("result-error");
+    return;
+  }
+  const rateValue = allRates[currencyCode].Value;
+  const result = (amount / rateValue).toFixed(2);
+  calcResult.textContent = `${amount} ₽ = ${result} ${currencyCode}`;
+  calcResult.classList.add("result-success");
+}
+
 // функция для отрисовки DOM
 function renderCurrencies(currencies) {
   container.innerHTML = "";
-  const symbols = ["USD", "EUR", "GBP", "CNY"];
 
-  symbols.forEach((code) => {
+  Object.keys(currencies).forEach((code) => {
     const currency = currencies[code];
     const diff = currency.Value - currency.Previous;
 
@@ -66,6 +104,13 @@ function renderCurrencies(currencies) {
     }
   });
 }
+
+document.querySelectorAll(".js-calc-btn").forEach((calcBtn) => {
+  calcBtn.addEventListener("click", (event) => {
+    const currency = event.target.dataset.currency;
+    calculate(currency);
+  });
+});
 
 fetchCurrency();
 // Обработчик на кнопку, чтобы вызывать fetchCurrency
