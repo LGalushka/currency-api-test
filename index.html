@@ -10,13 +10,29 @@
 
 <body>
   <div class="box">
+
     <h2>Курс валют</h2>
 
     <div id="error-message" class="errorMessage"></div>
+
+    <div class="calculator-section">
+
+      <input type="number" id="js-amount-input" placeholder="Сумма в рублях (₽)" class="containerInput">
+
+      <div class="button-group">
+        <button class="js-calc-btn" data-currency="USD">В доллары (USD)</button>
+        <button class="js-calc-btn" data-currency="EUR">В доллары (EUR)</button>
+      </div>
+
+      <p id="js-calc-result"></p>
+
+    </div>
+
     <ul id="js-container-currency" class="containerCurrency"></ul>
     <button id="js-update-btn" class="updateBtn">Обновить</button>
 
     <div id="loader">Загрузка данных... Подождите, пожалуйста</div>
+
   </div>
 
   <script src="script.js"></script>

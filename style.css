@@ -97,3 +97,33 @@ button:disabled {
 .change-down {
   color: #dc3545;
 }
+
+/* Вывод результата*/
+.containerInput {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+p {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.result-error {
+  color: red;
+}
+
+.result-success {
+  color: green;
+}
