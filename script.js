@@ -6,6 +6,7 @@ const amountInput = document.getElementById("js-amount-input");
 const calcResult = document.getElementById("js-calc-result");
 
 let allRates = {};
+const STORAGE_KEY = "currencyRatesCache";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,6 +22,29 @@ function filterCurrencyData(allRatesObject) {
     }
   });
   return filtered;
+}
+
+//Функция для сохранения данных в localStorage
+function saveRatesToLocalStorage(rates) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rates));
+    console.log("Курсы валют сохранены в localStorage.");
+  } catch (error) {
+    console.error("Ошибка при сохранении в localStorage:", error);
+  }
+}
+
+//Функция для чтения данных из localStorage
+function loadRatesFromLocalStorage() {
+  try {
+    const cachedData = localStorage.getItem(STORAGE_KEY);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
+  } catch (error) {
+    console.error("Ошибка при чтении из localStorage:", error);
+  }
+  return null;
 }
 
 async function fetchCurrency() {
@@ -44,12 +68,24 @@ async function fetchCurrency() {
     // Фильтруем их и сохраняем только 4 нужные в глобальную переменную
     allRates = filterCurrencyData(allCurrenciesArray);
 
+    //Сохраняем свежие данные
+    saveRatesToLocalStorage(allRates);
+
     // Передаем уже отфильтрованный объект в функцию отрисовки
     renderCurrencies(allRates);
   } catch (error) {
-    errorMessage.textContent =
-      "Не удалось загрузить курсы валют. Попробуйте позже.";
-    errorMessage.classList.add("errorMessage");
+    // В случае ошибка (например, нет сети) пытаемся загрузить из localStorage
+    const cachedRates = loadRatesFromLocalStorage();
+    if (cachedRates) {
+      allRates = cachedRates; //изпользуем кеш как запасной вариант
+      renderCurrencies(allRates); //отрисовываем кэш
+      errorMessage.textContent = "Нет сети. Показаны закэшированные данные.";
+      errorMessage.classList.add("errorMessage");
+    } else {
+      errorMessage.textContent =
+        "Не удалось загрузить курсы валют. Попробуйте позже.";
+      errorMessage.classList.add("errorMessage");
+    }
     console.error(error);
   } finally {
     loader.classList.add("hidden");
@@ -68,16 +104,28 @@ function calculate(currencyCode) {
     calcResult.classList.add("result-error");
     return;
   }
-  const rateValue = allRates[currencyCode].Value;
-  const result = (amount / rateValue).toFixed(2);
-  calcResult.textContent = `${amount} ₽ = ${result} ${currencyCode}`;
-  calcResult.classList.add("result-success");
+
+  // Проверяем наличие rateValue перед использованием, чтобы избежать ошибок,
+  //если кэш пустой при первом запуске приложения
+  if (allRates[currencyCode] && allRates[currencyCode].Value) {
+    const rateValue = allRates[currencyCode].Value;
+    const result = (amount / rateValue).toFixed(2);
+    calcResult.textContent = `${amount} ₽ = ${result} ${currencyCode}`;
+    calcResult.classList.add("result-success");
+  } else {
+    calcResult.textContent = "Данные для расчета недоступны";
+    calcResult.classList.add("result-error");
+  }
 }
 
 // функция для отрисовки DOM
 function renderCurrencies(currencies) {
   container.innerHTML = "";
-
+  //Проверяем, что объект currtncies не пуст перед отрисовкой
+  if (Object.keys(currencies).length === 0) {
+    container.innerHTML = "<p>Нет данных для отображения.</p>";
+    return;
+  }
   Object.keys(currencies).forEach((code) => {
     const currency = currencies[code];
     const diff = currency.Value - currency.Previous;
@@ -112,6 +160,22 @@ document.querySelectorAll(".js-calc-btn").forEach((calcBtn) => {
   });
 });
 
-fetchCurrency();
 // Обработчик на кнопку, чтобы вызывать fetchCurrency
 btn.addEventListener("click", fetchCurrency);
+
+// Инициализация при загрузке страницы
+function init() {
+  const cachedRates = loadRatesFromLocalStorage();
+  if (cachedRates) {
+    allRates = cachedRates;
+    renderCurrencies(allRates);
+    errorMessage.textContent =
+      "Показаны закэшированные данные. Нажмите Обновить для актуальных курсов.";
+    errorMessage.classList.add("errorMessage");
+  } else {
+    // Если кэша нет, делаем первый запрос  к API
+    fetchCurrency();
+  }
+}
+
+init(); //Запускаем инициализацию
